@@ -1,3 +1,4 @@
+# Project Description
 In this project, we seek to comprehensively clean the data set provided by the LAPD regarding crimes that have occured between 2020 up to the present year. Given the size of the data set, we limit our focus to only assault-related crimes.
 The data set can be downloaded here: https://catalog.data.gov/dataset/crime-data-from-2020-to-present
 According to the website: 
