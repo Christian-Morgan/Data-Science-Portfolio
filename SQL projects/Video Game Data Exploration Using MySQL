@@ -1,0 +1,84 @@
+-- Data set: https://www.kaggle.com/datasets/atharvaingle/video-games-dataset
+
+SELECT *
+FROM games_df;
+
+-- Check for duplicates
+SELECT 'Name'
+FROM games_df
+GROUP BY 'Name'
+HAVING COUNT(*) > 1;
+
+-- Since the name of each entry is unique, there are no duplicates
+
+-- See the number of entries per genre
+SELECT Genre, COUNT(*) AS count_per_genre
+FROM games_df
+GROUP BY Genre
+ORDER BY COUNT(*) DESC;
+
+-- See the total number of genres
+SELECT COUNT(DISTINCT Genre) AS total_unique_genres
+FROM games_df;
+
+-- Fix naming issues
+
+SET SQL_SAFE_UPDATES = 0;
+START TRANSACTION;
+UPDATE games_df
+SET Name = CASE
+	WHEN Name LIKE 'PokÃ©mon Yellow: Special Pikachu Edition' THEN 'Pokemon Yellow: Special Pikachu Edition'
+	WHEN Name LIKE 'PokÃ©mon Crystal Version' THEN 'Pokemon Crystal Version'
+	WHEN Name LIKE 'PokÃ©mon Emerald Version' THEN 'Pokemon Emerald Version'
+END
+WHERE Name LIKE 'PokÃ©mon%';
+SET SQL_SAFE_UPDATES = 1;
+SELECT * FROM games_df;
+
+-- Check to see if there are any NAN value in Global_Sales
+SELECT Global_Sales
+FROM games_df
+WHERE Global_Sales is NULL;
+
+-- Select game with highest Global sales
+SELECT Name, Global_Sales
+FROM games_df
+GROUP BY Name, Global_Sales
+HAVING Global_Sales = MAX(Global_Sales);
+
+-- See average sales per year
+SELECT Year, TRUNCATE(AVG(Global_Sales),2) as average_global_sales
+FROM games_df
+GROUP BY Year
+ORDER BY Year DESC;
+
+-- See which years were most profitable
+SELECT Year, TRUNCATE(AVG(Global_Sales),2) as average_global_sales
+FROM games_df
+GROUP BY Year
+ORDER BY average_global_sales DESC;
+
+-- See the number of games published for each year
+SELECT YEAR, COUNT(*) AS titles_per_year
+FROM games_df
+GROUP BY Year
+ORDER BY COUNT(*) DESC;
+
+-- See which companies are represented most
+SELECT Publisher, COUNT(*) AS publisher_count
+FROM games_df
+GROUP BY Publisher
+ORDER BY publisher_count DESC;
+
+-- Which publisher profitted the most in 2012?
+SELECT Year, Publisher, AVG(Global_Sales) AS avg_global_sales
+FROM games_df
+GROUP BY Year, Publisher
+HAVING Year=2012
+ORDER BY avg_global_sales DESC;
+
+-- Calculate the moving average
+SELECT
+	Year,
+	TRUNCATE(AVG(Global_Sales) OVER(ORDER BY Year ROWS BETWEEN 3 PRECEDING AND CURRENT ROW), 2) AS moving_average
+FROM games_df;
