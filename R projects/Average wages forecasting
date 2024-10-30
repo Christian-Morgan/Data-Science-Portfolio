@@ -1,0 +1,33 @@
+library(forecast)
+library(tseries)
+library(ggplot2)
+
+avgwages <- read.csv("C:/Users/Public/Downloads/median_average_wages.csv")
+avgwages <- avgwages[c('year','average')]
+
+# Sort data by year in ascending order
+avgwages <- avgwages[order(avgwages$year), ]
+
+# Define time series object
+wagestime <- ts(avgwages$average, start = min(avgwages$year), end = max(avgwages$year), frequency = 1)
+
+# Plot time series
+plot(wagestime, main = "Average Wages Over Time", ylab = "Average", xlab = "Year")
+
+# Check for stationarity with Augmented Dickey-Fuller test
+adf.test(wagestime)
+
+# Since the p-value is 0.7318, we fail to reject the null hypothesis, i.e., the series is not stationary. Using auto.arima function, we can find the best model parameters for our ARIMA timer series forecast.
+
+# Fit ARIMA model
+avgwages_model <- auto.arima(wagestime, ic = "aic", trace = TRUE)
+summary(avgwages_model)
+
+# Forecast the next 10 years
+avgwages_forecast <- forecast(avgwages_model, h = 10)
+plot(avgwages_forecast, main = "Average Wages Forecast", ylab = "Average", xlab = "Year")
+
+# Check residuals for model diagnostics
+checkresiduals(avgwages_model)
+
+# Each lag in the ACF plot falls within the threshold, meaning there is no significant autocorrelation in the residuals at any lag. Hence, the model accurately forecasts the average wages in the next 10 years.
