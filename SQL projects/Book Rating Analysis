@@ -1,0 +1,52 @@
+-- Data set: https://www.kaggle.com/datasets/ruchi798/bookcrossing-dataset
+
+-- Change User-ID columns to UserID
+ALTER TABLE ratings
+CHANGE COLUMN `User-ID` UserID INT;
+
+ALTER TABLE users
+CHANGE COLUMN `User-ID` UserID INT;
+
+-- Change Book-Title, Book-Author, and Year-Of-Publication to BookTitle, BookAuthor, and YearOfPublication
+ALTER TABLE books
+CHANGE COLUMN `Book-Title` BookTitle VARCHAR(500);
+
+ALTER TABLE books
+CHANGE COLUMN `Book-Author` BookAuthor VARCHAR(250);
+
+ALTER TABLE books
+CHANGE COLUMN `Year-Of-Publication` YearOfPublication INT;
+
+-- Set UserID from users table as primary key and UserID from ratings table as foreign key
+ALTER TABLE users
+ADD CONSTRAINT pk_UserID PRIMARY KEY (UserID);
+
+ALTER TABLE ratings
+ADD CONSTRAINT fk_UserID FOREIGN KEY (UserID) REFERENCES users(UserID);
+
+-- What is the average book rating with respect to age?
+SELECT  users.Age, AVG(ratings.BookRating) AS average_book_rating
+FROM users
+JOIN ratings ON ratings.UserID = users.UserID
+WHERE users.Age BETWEEN 0 AND 100
+GROUP BY users.Age
+ORDER BY users.Age ASC;
+
+-- See the number of books per publisher
+SELECT Publisher, COUNT(*) as num_of_books_per_year
+FROM books
+GROUP BY Publisher
+ORDER BY COUNT(*) DESC;
+
+-- Use inner join to see which books have ratings
+SELECT a.BookTitle, b.BookRating
+FROM books a
+INNER JOIN ratings b
+ON a.ISBN = b.ISBN;
+
+-- Show author, book title, and average book rating
+SELECT a.BookAuthor, a.BookTitle, AVG(b.BookRating) AS avg_book_rating, a.YearOfPublication
+FROM books a
+LEFT JOIN ratings b
+ON a.ISBN = b.ISBN
+GROUP BY a.BookAuthor, a.BookTitle, a.YearOfPublication;
