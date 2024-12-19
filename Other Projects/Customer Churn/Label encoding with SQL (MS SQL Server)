@@ -1,0 +1,390 @@
+-- Dataset: https://www.kaggle.com/datasets/utkalk/large-retail-data-set-for-eda
+
+USE [Retail_behavior_analysis];
+
+SELECT * FROM dbo.retail;
+
+BEGIN TRANSACTION;
+-- SAVE TRANSACTION Savepoint1;
+
+-- Check for duplicates
+SELECT customer_id
+FROM dbo.retail_data
+GROUP BY customer_id
+HAVING COUNT(*)>1;
+
+-- Since each customer id is unique, we conclude there are no duplicates
+
+-- We are interested in predicting whether or not a customer will get churned. Therefore, we replace 'yes' with 1 and 'no' with 0 in the churned category.
+
+UPDATE dbo.retail
+SET churned = 
+	CASE 
+		WHEN churned='Yes' THEN 1
+		ELSE 0
+END;
+
+
+-- ROLLBACK TRANSACTION Savepoint1;
+select * from dbo.retail;
+-- COMMIT;
+
+UPDATE dbo.retail
+SET loyalty_program=
+	CASE
+		WHEN loyalty_program= 'Yes' THEN 1
+		ELSE 0
+END;
+
+
+--COMMIT TRANSACTION;
+
+--BEGIN TRANSACTION
+--SAVE TRANSACTION Savepoint2
+
+-- Check unique labels for each column:
+SELECT education_level
+FROM dbo.retail
+GROUP BY education_level
+
+UPDATE dbo.retail
+SET education_level =
+		CASE
+			WHEN education_level='High School' THEN 0
+			WHEN education_level='Bachelor''s' THEN 1
+			WHEN education_level='Master''s' THEN 2
+			ELSE 3
+END;
+
+COMMIT TRANSACTION;
+
+
+-- Now we use One-Hot Encoding to convert binary categorical variables to 1s and 0s, respectively.
+BEGIN TRANSACTION;
+select * from dbo.retail;
+UPDATE dbo.retail
+SET app_usage =
+	CASE
+		WHEN app_usage='Low' THEN 0
+		WHEN app_usage='Medium' THEN 1
+		ELSE 2
+END;
+
+UPDATE dbo.retail
+SET social_media_engagement=
+	CASE WHEN social_media_engagement='Low' THEN 0
+	WHEN social_media_engagement='Medium' THEN 1
+	ELSE 2
+END;
+
+
+select * from dbo.retail;
+
+UPDATE dbo.retail
+SET income_bracket=
+	CASE WHEN income_bracket='Low' THEN 0
+	WHEN income_bracket='Medium' THEN 1
+	ELSE 2
+END;
+
+UPDATE dbo.retail
+SET promotion_effectiveness=
+	CASE WHEN promotion_effectiveness='Low' THEN 0
+	WHEN promotion_effectiveness='Medium' THEN 1
+	ELSE 2
+END;
+
+UPDATE dbo.retail
+SET email_subscriptions=
+	CASE WHEN email_subscriptions='No' THEN 0
+	ELSE 1
+END;
+
+UPDATE dbo.retail
+SET holiday_season=
+	CASE WHEN holiday_season='No' THEN 0
+	ELSE 1
+END;
+
+UPDATE dbo.retail
+SET weekend=
+	CASE WHEN weekend='No' THEN 0
+	ELSE 1
+END;
+
+UPDATE dbo.retail
+SET product_size=
+	CASE WHEN product_size='Small' THEN 0
+	WHEN product_size='Medium' THEN 1
+	ELSE 2
+END;
+
+COMMIT TRANSACTION;
+
+
+BEGIN TRANSACTION;
+-- SAVE TRANSACTION Savepoint3;
+
+select * from dbo.retail;
+-- One-Hot encode the 'gender' column.
+ALTER TABLE dbo.retail
+ADD Male INT,
+	Female INT,
+	Other INT;
+UPDATE dbo.retail
+SET 
+    Male = CASE WHEN gender = 'Male' THEN 1 ELSE 0 END,
+    Female = CASE WHEN gender = 'Female' THEN 1 ELSE 0 END,
+    Other = CASE WHEN gender = 'Other' THEN 1 ELSE 0 END;
+
+
+ALTER TABLE dbo.retail
+ADD Divorced INT,
+	Married INT,
+	Single INT;
+UPDATE dbo.retail
+SET 
+    Divorced = CASE WHEN marital_status = 'Divorced' THEN 1 ELSE 0 END,
+    Married = CASE WHEN marital_status = 'Married' THEN 1 ELSE 0 END,
+    Single = CASE WHEN marital_status = 'Single' THEN 1 ELSE 0 END;
+
+Select * from dbo.retail;
+
+ALTER TABLE dbo.retail
+ADD Spring INT,
+	Summer INT,
+	Fall INT,
+	Winter INT;
+UPDATE dbo.retail
+SET
+	Spring = CASE WHEN season = 'Spring' THEN 1 ELSE 0 END,
+	Summer = CASE WHEN season = 'Summer' THEN 1 ELSE 0 END,
+	Fall = CASE WHEN season = 'Fall' THEN 1 ELSE 0 end,
+	Winter = case when season = 'Winter' then 1 else 0 end;
+
+
+ALTER TABLE dbo.retail
+ADD Social_Media INT,
+	In_Store INT,
+	Online INT;
+UPDATE dbo.retail
+SET
+	Social_Media = CASE WHEN promotion_channel = 'Social Media' THEN 1 ELSE 0 END,
+	In_Store = CASE WHEN promotion_channel = 'In-store' THEN 1 ELSE 0 END,
+	Online = CASE WHEN promotion_channel = 'Online' THEN 1 ELSE 0 end;
+
+select * from dbo.retail;
+rollback transaction;
+
+SELECT promotion_channel
+FROM dbo.retail
+GROUP BY promotion_channel;
+
+ALTER TABLE dbo.retail
+DROP COLUMN promotion_channel;
+
+ALTER TABLE dbo.retail
+DROP COLUMN gender;
+
+ALTER TABLE dbo.retail
+DROP COLUMN marital_status;
+
+ALTER TABLE dbo.retail
+DROP COLUMN season;
+
+COMMIT TRANSACTION;
+
+select * from dbo.retail;
+
+BEGIN TRANSACTION;
+
+alter table dbo.retail
+drop column State_X_store, State_Y_store, State_Z_store;
+
+ALTER TABLE dbo.retail
+ADD State_X_store_state INT,
+	State_Y_store_state INT,
+	State_Z_store_state INT;
+UPDATE dbo.retail
+SET
+	State_X_store_state = CASE WHEN store_state = 'State X' THEN 1 ELSE 0 END,
+	State_Y_store_state = CASE WHEN store_state = 'State Y' THEN 1 ELSE 0 END,
+	State_Z_store_state = CASE WHEN store_state = 'State Z' THEN 1 ELSE 0 end;
+
+ALTER TABLE dbo.retail
+ADD State_X_customer_state INT,
+	State_Y_customer_state INT,
+	State_Z_customer_state INT;
+UPDATE dbo.retail
+SET
+	State_X_customer_state = CASE WHEN customer_state = 'State X' THEN 1 ELSE 0 END,
+	State_Y_customer_state = CASE WHEN customer_state = 'State Y' THEN 1 ELSE 0 END,
+	State_Z_customer_state = CASE WHEN customer_state = 'State Z' THEN 1 ELSE 0 end;
+
+select * from dbo.retail;
+
+ALTER TABLE dbo.retail
+DROP COLUMN State_X_store_city, State_Y_store_city, State_Z_store_city;
+
+ALTER TABLE dbo.retail
+ADD City_A_store_city INT,
+	City_B_store_city INT,
+	City_C_store_city INT,
+	City_D_store_city INT;
+UPDATE dbo.retail
+SET
+	City_A_store_city = CASE WHEN store_city = 'City A' THEN 1 ELSE 0 END,
+	City_B_store_city = CASE WHEN store_city = 'City B' THEN 1 ELSE 0 END,
+	City_C_store_city = CASE WHEN store_city = 'City C' THEN 1 ELSE 0 end,
+	City_D_store_city = CASE WHEN store_city = 'City D' THEN 1 ELSE 0 end;
+
+ALTER TABLE dbo.retail
+ADD City_A_customer_city INT,
+	City_B_customer_city INT,
+	City_C_customer_city INT,
+	City_D_customer_city INT;
+UPDATE dbo.retail
+SET
+	City_A_customer_city = CASE WHEN customer_city = 'City A' THEN 1 ELSE 0 END,
+	City_B_customer_city = CASE WHEN customer_city = 'City B' THEN 1 ELSE 0 END,
+	City_C_customer_city = CASE WHEN customer_city = 'City C' THEN 1 ELSE 0 end,
+	City_D_customer_city = CASE WHEN customer_city = 'City D' THEN 1 ELSE 0 end;
+
+
+ALTER TABLE dbo.retail
+DROP COLUMN store_state, customer_state, store_city, customer_city;
+
+COMMIT TRANSACTION;
+
+BEGIN TRANSACTION;
+select * from dbo.retail;
+
+ALTER TABLE dbo.retail
+ADD Self_Employed INT,
+	Retired INT,
+	Unemployed INT,
+	Employed INT,
+	Toys INT,
+	Groceries INT,
+	Clothing INT,
+	Electronics INT,
+	Furniture INT,
+	Cash INT,
+	Debit_Card INT,
+	Mobile_Payment INT,
+	Credit_Card INT,
+	Store_location_A INT,
+	Store_location_B INT,
+	Store_location_C INT,
+	Store_location_D INT,
+	Monday INT,
+	Tuesday INT,
+	Wednesday INT,
+	Thursday INT,
+	Friday INT,
+	Saturday INT,
+	Sunday INT,
+	Daily INT,
+	Weekly INT,
+	Monthly INT,
+	Yearly INT,
+	Preferred_store_A INT,
+	Preferred_store_B INT,
+	Preferred_store_C INT,
+	Preferred_store_D INT,
+	Product_name_A INT,
+	Product_name_B INT,
+	Product_name_C INT,
+	Product_name_D INT,
+	Product_brand_X INT,
+	Product_brand_Y INT,
+	Product_brand_Z INT,
+	Wood_material INT,
+	Glass_material INT,
+	Metal_material INT,
+	Plastic_material INT,
+	Green_color INT,
+	White_color INT,
+	Blue_color INT,
+	Black_color INT,
+	Red_color INT,
+	Buy1get1 INT,
+	Flash_sale INT,
+	twenty_perc_off INT,
+	New_customer INT,
+	Returning_customer INT;
+
+UPDATE dbo.retail
+SET Employed = CASE WHEN occupation = 'Employed' THEN 1 ELSE 0 END,
+	Self_Employed = CASE WHEN occupation = 'Self-Employed' THEN 1 ELSE 0 END,
+	Unemployed = CASE WHEN occupation = 'Unemployed' THEN 1 ELSE 0 end,
+	Retired = CASE WHEN occupation = 'Retired' THEN 1 ELSE 0 end,
+	Toys = CASE WHEN product_category = 'Toys' THEN 1 ELSE 0 END,
+	Groceries = CASE WHEN product_category = 'Groceries' THEN 1 ELSE 0 END,
+	Clothing = CASE WHEN product_category = 'Clothing' THEN 1 ELSE 0 end,
+	Electronics = CASE WHEN product_category = 'Electronics' THEN 1 ELSE 0 end,
+	Furniture = CASE WHEN product_category = 'Furniture' THEN 1 ELSE 0 end,
+	Cash = CASE WHEN payment_method = 'Cash' THEN 1 Else 0 end,
+	Debit_Card = CASE WHEN payment_method = 'Debit Card' THEN 1 Else 0 end,
+	Mobile_Payment = CASE WHEN payment_method = 'Mobile Payment' THEN 1 Else 0 end,
+	Credit_Card = CASE WHEN payment_method = 'Credit Card' THEN 1 Else 0 end;
+
+
+UPDATE dbo.retail
+SET Store_location_A = CASE WHEN store_location = 'Location A' THEN 1 ELSE 0 END,
+	Store_location_B = CASE WHEN store_location = 'Location B' THEN 1 ELSE 0 END,
+	Store_location_C = CASE WHEN store_location = 'Location C' THEN 1 ELSE 0 end,
+	Store_location_D = CASE WHEN store_location = 'Location D' THEN 1 ELSE 0 end,
+	Monday = CASE WHEN day_of_week = 'Monday' THEN 1 ELSE 0 END,
+	Tuesday = CASE WHEN day_of_week = 'Tuesday' THEN 1 ELSE 0 END,
+	Wednesday = CASE WHEN day_of_week = 'Wednesday' THEN 1 ELSE 0 END,
+	Thursday = CASE WHEN day_of_week = 'Thursday' THEN 1 ELSE 0 END,
+	Friday = CASE WHEN day_of_week = 'Friday' THEN 1 ELSE 0 END,
+	Saturday = CASE WHEN day_of_week = 'Saturday' THEN 1 ELSE 0 END,
+	Sunday = CASE WHEN day_of_week = 'Sunday' THEN 1 ELSE 0 END,
+	Daily = CASE WHEN purchase_frequency = 'Daily' THEN 1 ELSE 0 END,
+	Weekly = CASE WHEN purchase_frequency = 'Weekly' THEN 1 ELSE 0 END,
+	Monthly = CASE WHEN purchase_frequency = 'Monthly' THEN 1 ELSE 0 END,
+	Yearly = CASE WHEN purchase_frequency = 'Yearly' THEN 1 ELSE 0 END,
+	Preferred_store_A = CASE WHEN preferred_store = 'Location A' THEN 1 else 0 end,
+	Preferred_store_B = CASE WHEN preferred_store = 'Location B' THEN 1 else 0 end,
+	Preferred_store_C = CASE WHEN preferred_store = 'Location C' THEN 1 else 0 end,
+	Preferred_store_D = CASE WHEN preferred_store = 'Location D' THEN 1 else 0 end,
+	Product_name_A = Case when product_name = 'Product A' THEN 1 else 0 end,
+	Product_name_B = Case when product_name = 'Product B' THEN 1 else 0 end,
+	Product_name_C = Case when product_name = 'Product C' THEN 1 else 0 end,
+	Product_name_D = Case when product_name = 'Product D' THEN 1 else 0 end,
+	Product_brand_X = case when product_brand = 'Brand X' then 1 else 0 end,
+	Product_brand_Y = case when product_brand = 'Brand Y' then 1 else 0 end,
+	Product_brand_Z = case when product_brand = 'Brand Z' then 1 else 0 end,
+	Wood_material = case when product_material = 'Wood' then 1 else 0 end,
+	Metal_material = case when product_material = 'Metal' then 1 else 0 end,
+	Plastic_material = case when product_material = 'Plastic' then 1 else 0 end,
+	Glass_material = case when product_material = 'Glass' then 1 else 0 end,
+	Green_color = case when product_color = 'Green' then 1 else 0 end,
+	White_color = case when product_color = 'White' then 1 else 0 end,
+	Blue_color = case when product_color = 'Blue' then 1 else 0 end,
+	Black_color = case when product_color = 'Black' then 1 else 0 end,
+	Red_color = case when product_color = 'Red' then 1 else 0 end,
+	Buy1get1 = case when promotion_type = 'Buy One Get One Free' then 1 else 0 end,
+	Flash_Sale = case when promotion_type = 'Flash Sale' then 1 else 0 end,
+	twenty_perc_off = case when promotion_type = '20% Off' then 1 else 0 end,
+	New_customer = case when promotion_target_audience = 'New Customers' then 1 else 0 end,
+	Returning_customer = case when promotion_target_audience = 'Returning Customers' then 1 else 0 end;
+
+ALTER TABLE dbo.retail
+DROP COLUMN store_location, day_of_week, purchase_frequency, preferred_store, product_name, product_brand, product_material, product_color, promotion_type, promotion_target_audience;
+ALTER TABLE dbo.retail
+DROP COLUMN occupation, product_category, payment_method;
+
+COMMIT TRANSACTION;
+-- We have applied One-Hot Encoding and Label encoding for all columns. We now export the cleaned data as a csv file.
+
+-- We actually need to export two files: The table itself and the columns.
+SELECT 
+    COLUMN_NAME 
+FROM 
+    INFORMATION_SCHEMA.COLUMNS
+WHERE 
+    TABLE_NAME = 'retail' AND 
+    TABLE_SCHEMA = 'dbo';
