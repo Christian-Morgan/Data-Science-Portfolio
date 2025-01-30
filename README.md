@@ -1,5 +1,5 @@
 # Data Science Projects
-Data science projects showcasing data cleaning, exploratory analysis, machine learning, and visualization using Python, R, and Tableau.
+### A collection of data science projects demonstrating statistical analysis, exploratory data analysis (EDA), machine learning, and data visualization using Python, R, TensorFlow, Tableau, and other tools.
 
 ## Projects List
    - ### Statistics
