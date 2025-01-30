@@ -10,6 +10,8 @@ Data science projects showcasing data cleaning, exploratory analysis, machine le
    - ### Machine Learning
      -  [Sleep disorder prediction](https://github.com/Christian-Morgan/Data-Science-Portfolio/tree/main/Sleep%20Disorder%20Project): Using features such as age, gender, sleep quality, stress level, etc. we predict, using Logistic Regression, the likelihood that a person will suffer from a sleep disorder.
          - **Tools Used:** Pandas, NumPy, scikit-learn, and Seaborn
+     -  [Book Recommendation System](https://github.com/Christian-Morgan/Data-Science-Portfolio/blob/main/Book_Recommendation_System.ipynb): Scraped data from Wikipedia using BeautifulSoup and requests. Built a recommendation system using TensorFlow, which leverages neural networks and embedding layers for text and categorical features like book titles, authors, genres, and other metadata to generate book recommendations.
+         - **Tools Used:** Pandas, NumPy, scikit-learn, TensorFlow
    - ### Data Analysis and Visualization
       - [IMDB data visualization](https://github.com/Christian-Morgan/Data-Science-Portfolio/tree/main/IMDB%20Movies%20Data%20Analysis): This project involves analyzing movie and TV show data from IMDB to uncover insights through data visualization techniques. We focus on a dataset of the top 1000 movies and TV shows, exploring various aspects such as average ratings, actor roles, and genre popularity.
          -  **Tools Used:** Pandas, NumPy, matplotlib, seaborn, Plotly
