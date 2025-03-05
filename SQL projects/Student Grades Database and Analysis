@@ -1,0 +1,170 @@
+-- Create tables for analysis
+
+CREATE TABLE classes (
+    class_id INT PRIMARY KEY,
+	class_name VARCHAR(50),
+    instructor_name VARCHAR(50)
+);
+
+CREATE TABLE student_grades (
+	student_id VARCHAR(10) PRIMARY KEY,
+	class_id INT REFERENCES classes(class_id),
+    student_name VARCHAR(50),
+    student_grade INT
+);
+
+-- Insert data for both tables
+
+-- Data for students_grades table
+INSERT INTO student_grades VALUES ('0021', 1, 'Mark Smith', 52);
+INSERT INTO student_grades VALUES ('0014', 1, 'Emily Nguyen', 75);
+INSERT INTO student_grades VALUES ('0151', 1, 'Michael Hernandez', 83);
+INSERT INTO student_grades VALUES ('1005', 1, 'Sophia Patel', 75);
+INSERT INTO student_grades VALUES ('0116', 1, 'Olivia Morales', 79);
+INSERT INTO student_grades VALUES ('1011', 1, 'Sarah Johnson', 66);
+INSERT INTO student_grades VALUES ('1104', 1, 'Olivia Thompson', 86);
+INSERT INTO student_grades VALUES ('1177', 1, 'Mason Carter', 76);
+INSERT INTO student_grades VALUES ('3102', 2, 'Mary Jones', 92);
+INSERT INTO student_grades VALUES ('0411', 2, 'Jessica Garcia', 68);
+INSERT INTO student_grades VALUES ('0010', 2, 'Jackson Lee', 52);
+INSERT INTO student_grades VALUES ('0100', 2, 'Emily Rodriguez', 64);
+INSERT INTO student_grades VALUES ('1000', 2, 'Jacob Martinez', 77);
+INSERT INTO student_grades VALUES ('1001', 2, 'Matthew Anderson', 83);
+INSERT INTO student_grades VALUES ('1010', 2, 'Daniel Flores', 96);
+INSERT INTO student_grades VALUES ('1100', 2, 'Ethan Miller', 72);
+INSERT INTO student_grades VALUES ('1101', 2, 'Jessica Smith', 97);
+INSERT INTO student_grades VALUES ('1110', 2, 'Emily Wilson', 64);
+INSERT INTO student_grades VALUES ('1112', 2, 'Olivia Taylor', 76);
+INSERT INTO student_grades VALUES ('1234', 3, 'Sarah Johnson', 88);
+INSERT INTO student_grades VALUES ('5678', 3, 'Christopher Davis', 71);
+INSERT INTO student_grades VALUES ('9012', 3, 'Abigail Gonzalez', 59);
+INSERT INTO student_grades VALUES ('3456', 3, 'Noah Ramirez', 82);
+INSERT INTO student_grades VALUES ('7890', 3, 'Isabella Morales', 90);
+INSERT INTO student_grades VALUES ('2109', 3, 'William Diaz', 75);
+INSERT INTO student_grades VALUES ('6543', 3, 'Mia Gutierrez', 88);
+INSERT INTO student_grades VALUES ('0987', 3, 'Lucas Sanchez', 79);
+INSERT INTO student_grades VALUES ('4321', 3, 'Avery Reyes', 91);
+INSERT INTO student_grades VALUES ('8765', 3, 'Emma Castillo', 68);
+INSERT INTO student_grades VALUES ('2345', 3, 'Liam Jimenez', 74);
+
+-- Data for classes table
+INSERT INTO classes VALUES (1, 'Calculus', 'Ethan Hayes');
+INSERT INTO classes VALUES (2, 'Biology', 'Harper Wilson');
+INSERT INTO classes VALUES (3, 'Trigonometry', 'Chloe Bennett');
+
+-- 1) Calculate the average grade per class
+SELECT c.class_name, AVG(s.student_grade) as average_grade
+FROM classes c
+JOIN student_grades s
+ON c.class_id=s.class_id
+GROUP BY c.class_name;
+
+-- 2) Find the students in Biology who have an A or A- grade
+SELECT student_name, student_grade
+FROM student_grades
+WHERE class_id = 2 AND student_grade >= 90
+ORDER BY student_grade DESC;
+
+-- 3) Create trigger so that the grade is never below 0
+DELIMITER //
+
+CREATE TRIGGER update_grade
+BEFORE INSERT ON student_grades
+FOR EACH ROW
+BEGIN
+	IF NEW.student_grade < 0 THEN
+		SET NEW.student_grade = 0;
+	END IF;
+END;
+//
+
+-- 4) Find the student name and the class name of the student with the highest grade out of all classes
+SELECT s.student_name, c.class_name, s.student_grade
+FROM student_grades s
+JOIN classes c ON s.class_id = c.class_id
+ORDER BY student_grade DESC
+LIMIT 1;
+
+-- 5) Find the most popular student (first) name
+WITH my_cte AS
+	(SELECT SUBSTRING_INDEX(student_name, ' ', 1) AS first_name
+	FROM student_grades
+)
+SELECT
+	first_name,
+    COUNT(*)
+FROM my_cte
+GROUP BY first_name
+ORDER BY COUNT(*) DESC
+LIMIT 1;
+
+-- 6) Count the number of C students, B students, and A students, respectively
+SELECT
+	(SELECT COUNT(*) AS number_of_C_students FROM student_grades WHERE student_grade BETWEEN 70 AND 79) AS num_of_C_students,
+	(SELECT COUNT(*) AS number_of_B_students FROM student_grades WHERE student_grade BETWEEN 80 AND 89) AS num_of_B_students,
+	(SELECT COUNT(*) FROM student_grades WHERE student_grade BETWEEN 90 AND 100) AS num_of_A_students;
+
+-- Alternatively, we could solve it using the following query
+SELECT
+	COUNT(CASE WHEN student_grade BETWEEN 70 and 79 THEN 1 END) AS num_of_C_students,
+	COUNT(CASE WHEN student_grade BETWEEN 80 and 89 THEN 1 END) AS num_of_B_students,
+	COUNT(CASE WHEN student_grade BETWEEN 90 and 100 THEN 1 END) AS num_of_A_students
+FROM student_grades;
+
+-- 7) Add gender column to student_grades
+ALTER TABLE student_grades
+ADD COLUMN student_gender VARCHAR(10);
+
+-- 8) Insert values into student_gender column
+SET SQL_SAFE_UPDATES = 0;
+
+UPDATE student_grades
+	SET student_gender =
+		CASE
+			WHEN student_id = '0021' THEN 'M'
+			WHEN student_id = '0014' THEN 'F'
+			WHEN student_id = '0151' THEN 'M'
+			WHEN student_id = '1005' THEN 'F'
+			WHEN student_id = '0116' THEN 'F'
+			WHEN student_id = '1011' THEN 'F'
+			WHEN student_id = '1104' THEN 'F'
+			WHEN student_id = '1177' THEN 'M'
+			WHEN student_id = '3102' THEN 'F'
+			WHEN student_id = '0411' THEN 'F'
+			WHEN student_id = '0010' THEN 'M'
+			WHEN student_id = '0100' THEN 'F'
+			WHEN student_id = '1000' THEN 'M'
+			WHEN student_id = '1001' THEN 'M'
+			WHEN student_id = '1010' THEN 'M'
+			WHEN student_id = '1100' THEN 'M'
+			WHEN student_id = '1101' THEN 'F'
+			WHEN student_id = '1110' THEN 'F'
+			WHEN student_id = '1112' THEN 'F'
+			WHEN student_id = '1234' THEN 'F'
+			WHEN student_id = '5678' THEN 'M'
+			WHEN student_id = '9012' THEN 'F'
+			WHEN student_id = '3456' THEN 'M'
+			WHEN student_id = '7890' THEN 'F'
+			WHEN student_id = '2109' THEN 'M'
+			WHEN student_id = '6543' THEN 'F'
+			WHEN student_id = '0987' THEN 'M'
+			WHEN student_id = '4321' THEN 'F'
+			WHEN student_id = '8765' THEN 'F'
+			WHEN student_id = '2345' THEN 'M'
+	END;
+    
+SET SQL_SAFE_UPDATES = 1;
+
+-- Check the table
+SELECT * FROM student_grades;
+
+-- 9) Find the number of males and females for all classes
+SELECT (CASE WHEN student_gender = 'M' THEN 'male' ELSE 'female' END) AS gender, COUNT(*) as gender_count
+FROM student_grades
+GROUP BY student_gender;
+
+-- 10) Find the number of males and females per class
+SELECT c.class_name, (CASE WHEN s.student_gender = 'M' THEN 'male' ELSE 'female' END) AS gender, COUNT(*) AS num_of_students
+FROM classes c
+JOIN student_grades s ON s.class_id = c.class_id
+GROUP BY gender, c.class_name;
