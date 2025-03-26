@@ -7,6 +7,7 @@ Designed and implemented a full ETL and data analysis pipeline using Microsoft S
 This project uses **Shopping Cart Database** by **Ruchi Bhatia**.  
 
 🔗 [Dataset Link](https://www.kaggle.com/datasets/ruchi798/shopping-cart-database)
+
 🔗 Licensed under **[CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)**
 
 **Attribution:**  
