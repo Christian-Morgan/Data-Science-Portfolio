@@ -14,9 +14,9 @@
 
 * The company maintained near-equal gender representation, suggesting balanced diversity in hiring.
 
-![image](https://github.com/user-attachments/assets/68325590-9912-4314-a0b1-67aa14c90090)
-![image](https://github.com/user-attachments/assets/72bb161f-b248-4615-93a3-12dc16a2fe16)
-![image](https://github.com/user-attachments/assets/dd44ef5a-f25c-4bb9-9f11-a67c4aec5e76)
+![image](https://github.com/user-attachments/assets/7b65615d-9908-4c10-9414-86cecbc702be)
+![image](https://github.com/user-attachments/assets/4dcc946b-d378-48d1-a45a-25569264fea6)
+![image](https://github.com/user-attachments/assets/162d958d-fbd7-48f6-bf8a-3ac1ba97b674)
 
 
 Dataset: https://www.kaggle.com/datasets/mexwell/employee-performance-and-productivity-data
