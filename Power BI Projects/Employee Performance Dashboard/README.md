@@ -4,8 +4,6 @@
 
 #### Key findings:
 
-* Productivity peaked when employees worked remotely 25% of the time (average score: 3.01), then slightly declined with more remote work.
-
 * The company saw a 219% increase in total employees from 2014 to 2015, indicating rapid scaling.
 
 * Turnover remained consistent at 9.8% per year, helping assess workforce stability.
