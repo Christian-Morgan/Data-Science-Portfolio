@@ -32,3 +32,7 @@ The primary goal was to **practice complex SQL** with a focus on:
 - Grouping, filtering, and conditional logic
 - Aggregate functions (AVG, COUNT, STDEV, etc.)
 - Subqueries and cross joins
+
+## HospitalDB Schema
+
+<img width="1115" height="717" alt="hospitaldb_schema" src="https://github.com/user-attachments/assets/ef951db4-1344-4923-bd79-0d274822a689" />
