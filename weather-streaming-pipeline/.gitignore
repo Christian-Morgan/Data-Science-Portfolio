@@ -1,0 +1,50 @@
+# Secrets and credentials
+*.env
+.env
+local.settings.json
+*config.json
+!*.template.json
+!cluster_config.json
+*.key
+*.pem
+connection_strings.txt
+
+# Azure Function
+__pycache__/
+*.py[cod]
+*$py.class
+.python_packages/
+.venv/
+env/
+venv/
+.azure/
+
+# Databricks
+.databricks/
+*.checkpoint/
+
+# IDE and editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+*.tmp
+temp/
+tmp/
+
+# OS specific
+Thumbs.db
+.DS_Store
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
