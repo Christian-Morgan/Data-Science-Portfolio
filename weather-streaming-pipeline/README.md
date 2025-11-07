@@ -10,7 +10,7 @@ Developed a real-time ETL pipeline to continuously process weather data for mult
 
 ## Architecture
 
-![Architecture Diagram](screenshots/real-time-weather-streaming-pipeline.png)
+![Architecture Diagram](screenshots/pipeline-architecture.png)
 
 ## Tech Stack
 - **Python** (Jupyter Notebooks, `requests`, PySpark)
