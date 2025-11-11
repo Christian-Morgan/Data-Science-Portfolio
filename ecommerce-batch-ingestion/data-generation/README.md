@@ -1,3 +1,4 @@
+# Data Generation
 This folder contains the scripts and configuration files used to generate **synthetic (fake) data** for this project.
 
 ## Overview
