@@ -8,7 +8,7 @@
       - [Ad Campaign A/B Testing](https://github.com/Christian-Morgan/Data-Science-Portfolio/blob/main/Python\%20projects/AB_testing.ipynb): Performed A/B testing to evaluate the effectiveness of an ad campaign. Conducted a t-test to assess the statistical significance of differences in conversion rates between the control group (viewed only a public service announcement) and the experiment group (viewed the ad).
          - **Tools Used:** Pandas, NumPy, SciPy 
    - ### Machine Learning
-     -  [Sleep disorder prediction](https://github.com/Christian-Morgan/Data-Science-Portfolio/tree/main/Sleep\%20Disorder\%20Project): Using features such as age, gender, sleep quality, stress level, etc. we predict, using Logistic Regression, the likelihood that a person will suffer from a sleep disorder.
+     -  [Sleep disorder prediction](https://github.com/Christian-Morgan/Data-Science-Portfolio/tree/main/Python%20projects/Sleep%20Disorder%20Project): Using features such as age, gender, sleep quality, stress level, etc. we predict, using Logistic Regression, the likelihood that a person will suffer from a sleep disorder.
          - **Tools Used:** Pandas, NumPy, scikit-learn, and Seaborn
      -  [Book Recommendation System](https://github.com/Christian-Morgan/Data-Science-Portfolio/blob/main/Book_Recommendation_System.ipynb): Scraped data from Wikipedia using BeautifulSoup and requests. Built a recommendation system using TensorFlow, which leverages neural networks and embedding layers for text and categorical features like book titles, authors, genres, and other metadata to generate book recommendations.
          - **Tools Used:** Pandas, NumPy, scikit-learn, TensorFlow
