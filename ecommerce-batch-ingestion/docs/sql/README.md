@@ -1,0 +1,1 @@
+**CDC Script** – SQL Server script that creates customers, products, and orders tables and enables Change Data Capture (CDC) on the ecommerce database. Tracks inserts, updates, and deletes for incremental ingestion into the Bronze layer (raw data storage). Executed in SQL Server Management Studio (SSMS); includes verification of CDC-tracked tables.
