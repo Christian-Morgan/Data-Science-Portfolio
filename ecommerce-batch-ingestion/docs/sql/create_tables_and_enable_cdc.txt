@@ -1,0 +1,79 @@
+USE [ecommerce-db]
+GO
+
+
+-- Create customers, products, and orders tables
+CREATE TABLE dbo.customers (
+    customer_id INT PRIMARY KEY,
+    first_name VARCHAR(50),
+    last_name VARCHAR(50),
+    email VARCHAR(100),
+    phone VARCHAR(20),
+    address VARCHAR(200),
+    city VARCHAR(50),
+    state VARCHAR(20),
+    zip VARCHAR(10),
+    created_date DATETIME2 DEFAULT GETDATE(),
+    modified_date DATETIME2 DEFAULT GETDATE()
+)
+
+CREATE TABLE dbo.products (
+    product_id INT PRIMARY KEY,
+    product_name VARCHAR(100) NOT NULL,
+    category VARCHAR(100),
+    subcategory VARCHAR(100),
+    brand VARCHAR(100),
+    unit_price DECIMAL(10, 2),
+    cost DECIMAL(10, 2),
+    created_date DATETIME2 DEFAULT GETDATE()
+)
+
+
+CREATE TABLE dbo.orders (
+    order_id INT PRIMARY KEY,
+    customer_id INT NOT NULL,
+    product_id INT NOT NULL,
+    order_date DATE NOT NULL,
+    quantity INT NOT NULL,
+    unit_price DECIMAL(10, 2),
+    discount DECIMAL(3, 2),
+    created_date DATETIME2 DEFAULT GETDATE(),
+    modified_date DATETIME2 DEFAULT GETDATE(),
+
+    CONSTRAINT fk_orders_customers FOREIGN KEY (customer_id)
+        REFERENCES dbo.customers(customer_id),
+    CONSTRAINT fk_orders_products FOREIGN KEY (product_id)
+        REFERENCES dbo.products(product_id)
+)
+
+
+-- Enable Database for CDC
+EXEC sys.sp_cdc_enable_db
+GO
+
+-- Enable CDC for tables
+EXEC sys.sp_cdc_enable_table
+    @source_schema = N'dbo',
+    @source_name   = N'customers',
+    @role_name     = NULL,
+    @supports_net_changes = 1
+GO
+
+EXEC sys.sp_cdc_enable_table
+    @source_schema = N'dbo',
+    @source_name   = N'products',
+    @role_name     = NULL,
+    @supports_net_changes = 1
+GO
+
+EXEC sys.sp_cdc_enable_table
+    @source_schema = N'dbo',
+    @source_name   = N'orders',
+    @role_name     = NULL,
+    @supports_net_changes = 1
+GO
+
+-- Check to see which tables are tracked by cdc
+SELECT name, is_tracked_by_cdc
+FROM sys.tables
+WHERE is_tracked_by_cdc = 1;
